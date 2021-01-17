@@ -1,0 +1,20 @@
+conda create -n sda pip python=3.7
+
+conda activate sda
+
+conda install pytorch=1.6.0 torchvision=0.7.0 cudatoolkit=10.2 -c pytorch
+
+conda install -c conda-forge ffmpeg
+pip install sk-video
+pip install face-alignment
+pip install pydub
+
+pip install .
+
+https://drive.google.com/open?id=1pJdsnknLmMLvA8RQIAV3AQH8vU0FeK16
+
+からモデルデータをDL
+C:\MMD\speech-driven-animation-mmd\sda\dataに配置
+
+
+

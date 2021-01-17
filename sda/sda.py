@@ -18,7 +18,7 @@ import ffmpeg
 import face_alignment
 from pydub import AudioSegment
 from pydub.utils import mediainfo
-
+from tqdm import tqdm
 
 @contextlib.contextmanager
 def cd(newdir, cleanup=lambda: True):
@@ -113,6 +113,7 @@ class VideoAnimator():
         self.stablePntsIDs = [33, 36, 39, 42, 45]
         self.mean_face = model_dict["mean_face"]
         self.img_size = model_dict["img_size"]
+        # self.img_size = (self.img_size[0] * 4, self.img_size[1] * 4)
         self.audio_rate = model_dict["audio_rate"]
         self.video_rate = model_dict["video_rate"]
         self.audio_feat_len = model_dict['audio_feat_len']
@@ -156,7 +157,7 @@ class VideoAnimator():
 
     def save_video(self, video, audio, path, overwrite=True, experimental_ffmpeg=False, scale=None):
         if not os.path.isabs(path):
-            path = os.getcwd() + "/" + path;
+            path = os.getcwd() + "/" + path
 
         with tempdir() as dirpath:
             # Save the video file
@@ -164,7 +165,7 @@ class VideoAnimator():
                                       inputdict={'-r': str(self.video_rate) + "/1", },
                                       outputdict={'-r': str(self.video_rate) + "/1", }
                                       )
-            for i in range(video.shape[0]):
+            for i in tqdm(range(video.shape[0])):
                 frame = np.rollaxis(video[i, :, :, :], 0, 3)
 
                 if scale is not None:
@@ -272,7 +273,7 @@ class VideoAnimator():
         noise = torch.FloatTensor(1, audio_feat_seq_length, self.aux_latent).normal_(0, 0.33).to(self.device)
         z_id, skips = self.encoder_id(frame, retain_intermediate=True)
         skip_connections = []
-        for skip_variable in skips:
+        for skip_variable in tqdm(skips):
             skip_connections.append(self._broadcast_elements_(skip_variable, z.size()[1]))
         skip_connections.reverse()
 
